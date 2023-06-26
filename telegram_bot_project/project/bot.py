@@ -13,5 +13,9 @@ async def on_startup(_):
     print('BOT go')
 
 
+@dp.message_handler(commands=['start'])
+async def fist(message: types.Message):
+    await message.answer('hi')
+
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
