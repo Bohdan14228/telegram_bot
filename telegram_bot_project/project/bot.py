@@ -13,6 +13,11 @@ async def on_startup(_):
     print('BOT go')
 
 
+@dp.message_handler(commands=['file'])
+async def fist(message: types.Message):
+    await message.answer('hi')
+
+
 @dp.message_handler(commands=['start'])
 async def fist(message: types.Message):
     await message.answer('hi')
