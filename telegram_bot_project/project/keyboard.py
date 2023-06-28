@@ -17,6 +17,8 @@ admin_ikb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton('Закрити', callback_data='close')]
     ]
     )
+
+
 add_text_ikb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton("Додати як заголовок 'Інструкції'", callback_data='add_header')],
     [InlineKeyboardButton("Додати як текст 'Інструкції'", callback_data='add_text')],

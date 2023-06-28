@@ -55,8 +55,15 @@ async def ikb_close(callback: types.CallbackQuery):
     elif callback.data == 'add_instruction':
         await callback.message.delete()
         await callback.message.answer('Напишіть заголовок для інструкції')
-
-
+    elif callback.data == 'add_header':
+        await callback.answer('Додано новий заголовок')
+        # await add_instruction(callback.message.text)
+        try:
+            await add_instruction(callback.message.text)
+        except sqlite3.IntegrityError as ex:
+            await callback.message.answer('Такий заголовок вже існує')
+        await callback.message.delete()
+        # print(callback.message.text)
 
 
 # @dp.message_handler(Text(equals='Інструкція'))

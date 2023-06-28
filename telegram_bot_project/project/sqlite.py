@@ -14,10 +14,10 @@ async def add_user(u_id, name, username):
             db.commit()
 
 
-async def add_instruction(name_problem):
+async def add_instruction(np):
     with sqlite3.connect('instructions.db') as db:
         cursor = db.cursor()
-        cursor.execute('''INSERT INTO problems(name_problem) VALUES (?)''', name_problem)
+        cursor.execute('''INSERT INTO problems(name_problem) VALUES (?)''', (np,))
         db.commit()
 
 
