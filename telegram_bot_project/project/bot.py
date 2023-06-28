@@ -2,7 +2,8 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
 import random
 from keyboard import *
-from base import admin_base
+from admin_base import admin_base
+from sqlite import *
 
 API_TOKEN = '5993455599:AAF5T1T_U0Mgglb7aCMJLXQfnXRaW8Zt-_U'
 
@@ -25,6 +26,7 @@ async def start(message: types.Message):
         await message.answer(text=mess, reply_markup=kb_admin)
     else:
         await message.answer(text=mess, reply_markup=kb1)
+    await add_user(message.from_user.id, name)
     await message.delete()
 
 

@@ -1,5 +1,5 @@
 from aiogram.types import *
-from base import admin_base
+from admin_base import admin_base
 
 kb1 = ReplyKeyboardMarkup(resize_keyboard=True)
 b1 = KeyboardButton('Твій user_id')
