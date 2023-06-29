@@ -43,6 +43,8 @@ async def send_user_id(message: types.Message):
         if examination_in_base(message.from_user.id):
             await message.answer(text='Адмін-панель', reply_markup=admin_ikb)
         await message.delete()
+    elif message.text == 'Інструкція':
+        await message.answer()
     else:
         await message.delete()
         await message.answer(text=message.text, reply_markup=add_text_ikb)
