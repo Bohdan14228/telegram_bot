@@ -59,9 +59,9 @@ async def send_user_id(message: types.Message):
 async def ikb_close(callback: types.CallbackQuery):
     if callback.data == 'close':
         await callback.message.delete()
-    elif callback.data == 'add_instruction':
-        await callback.message.delete()
-        await callback.message.answer('Напишіть заголовок для інструкції')
+    # elif callback.data == 'add_instruction':
+    #     await callback.message.delete()
+    #     await callback.message.answer('Напишіть заголовок для інструкції')
     elif callback.data == 'add_header':
         try:
             await add_instruction(callback.message.text)
@@ -72,10 +72,14 @@ async def ikb_close(callback: types.CallbackQuery):
     elif callback.data == 'add_text':
         await callback.message.delete()
         await callback.message.answer(f'''Виберіть заголовок для цього тексту:
-<b>{callback.message.text}</b>''', parse_mode='HTML', reply_markup=await add_records(text=callback.message.text))
+<b>{callback.message.text}</b>''', parse_mode='HTML', reply_markup=await add_records_ikb(text=callback.message.text))
     elif callback.data.startswith('add_records'):
+        text = callback.data.replace('add_records', '')
+        await add_records(text.split(':')[1], text.split(':')[0])
         await callback.message.delete()
-        await callback.message.answer(callback.message.text)
+    elif callback.data.startswith('show_instruction'):
+        text = callback.data.replace('show_instruction', '')
+        await callback.message.answer(await show_records(text))
 
 
 if __name__ == '__main__':

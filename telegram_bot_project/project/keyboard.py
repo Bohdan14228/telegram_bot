@@ -41,32 +41,20 @@ async def func_add_text_ikb():
 async def ikb_instructions():
     ikb = InlineKeyboardMarkup(row_width=1)
     for i in await for_ikb_instructions():
-        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"{i[1]}"))
+        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"show_instruction{i[1]}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
+# print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
 
 
-async def add_records(text):
+async def add_records_ikb(text):
     ikb = InlineKeyboardMarkup(row_width=1)
-    for i in await for_ikb_instructions():
-        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"add_records {text}"))
+    for i in await for_add_records_ikb():
+        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"add_records{text}:{i[1]}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
 
 # print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
-
-# inst_ikb = InlineKeyboardMarkup(inline_keyboard=[
-#     [InlineKeyboardButton("Зробити заголовк")]])
-# admin_ikb.add(KeyboardButton("Додати 'Інструкцію'"),
-#              KeyboardButton("Видалити 'Інструкцію'")).add(KeyboardButton("Назад"))
-
-
-# ikb1 = InlineKeyboardMarkup(row_width=2)
-# ib1 = InlineKeyboardButton(text='❤️', callback_data='like')
-# ib2 = InlineKeyboardButton(text='👎️', callback_data='dislike')
-# ib3 = InlineKeyboardButton(text='Следующая фотка', callback_data='next')
-# ib4 = InlineKeyboardButton(text='Главное меню', callback_data='main')
-# ikb1.add(ib1, ib2, ib3).add(ib4)
 
 
 # @dp.message_handler()

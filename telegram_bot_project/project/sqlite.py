@@ -1,7 +1,6 @@
 import sqlite3
 import asyncio
 import string
-
 import aiosqlite
 import random
 
@@ -11,7 +10,7 @@ async def show_for_db(name, name_table):
         cursor = await db.cursor()
         await cursor.execute(f"SELECT {name} FROM {name_table}")
         return [i[0] for i in await cursor.fetchall()]
-# print(asyncio.get_event_loop().run_until_complete(show_for_db()))
+# print(asyncio.get_event_loop().run_until_complete(show_for_db('problem_id', 'records')))
 
 
 # добавляет юзера при нажатии на команду старт
@@ -48,6 +47,7 @@ async def add_instruction(np):
         await db.commit()
 
 
+# показывает заголовки
 async def show_problems():
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
@@ -55,34 +55,66 @@ async def show_problems():
         return [i[0] for i in await cursor.fetchall()]
 
 
+# Для добавления текста инструкции
+async def show_problemid_in_records():
+    list1 = []
+    for i in await show_for_db('problem_id', 'records'):
+        if i in await show_for_db('id', 'problems'):
+            list1.append(i)
+    return list1
+
+
+# для кнопок
 async def for_ikb_instructions():
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
-        await cursor.execute("SELECT name_problem, callback FROM problems")
-        return await cursor.fetchall()
-
+        await cursor.execute("SELECT id, name_problem, callback FROM problems")
+        return [i[1:] for i in await cursor.fetchall() if i[0] in await show_problemid_in_records()]
 # print(asyncio.get_event_loop().run_until_complete(for_ikb_instructions()))
+
+
+async def for_add_records_ikb():
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute("SELECT id, name_problem, callback FROM problems")
+        return [i[1:] for i in await cursor.fetchall() if i[0] in await show_free_problem()]
+
+
+# паказ инструкций где есть записи
+async def show_problem_id(callback):
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute("SELECT id FROM problems WHERE callback = ?", (callback,))
+        return [i[0] for i in await cursor.fetchall()][0]
+
+
+async def show_free_problem():
+    list1 = []
+    for i in await show_for_db('id', 'problems'):
+        if i not in await show_for_db('problem_id', 'records'):
+            list1.append(i)
+    return list1
+
+
+# добавление записей
+async def add_records(callback, record):
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute('''INSERT INTO records(problem_id, record) VALUES (?, ?)''',
+                             (await show_problem_id(callback), record))
+        await db.commit()
+
+
+async def show_records(callback):
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute("SELECT record FROM records WHERE problem_id = ?", (await show_problem_id(callback),))
+        return [i[0] for i in await cursor.fetchall()][0]
+
+
+
+# print(asyncio.get_event_loop().run_until_complete(show_records('uhcfypeabi')))
 
 # loop = asyncio.get_event_loop()
 # print(loop.run_until_complete(for_ikb_instructions()))
 
-# async def show_problems():
-#     async with aiosqlite.connect('instructions.db') as db:
-#         cursor = await db.execute("SELECT name_problem FROM problems")
-#         return [i[0] for i in await cursor.fetchall()]
-
-
-# print(asyncio.run(show_problems()))
-# problems_list = await show_problems()
-
-# with sqlite3.connect('instructions.db') as db:
-#     cursor = db.cursor()
-#     cursor.execute(f"SELECT name_problem FROM problems")
-#     print([i[0] for i in cursor.fetchall()])
-
-
-# with sqlite3.connect('instructions.db') as db:
-#     cursor = db.cursor()
-#     print([i[0] for i in cursor.execute('''SELECT user_id FROM users''').fetchall()])
-#     if '428392590' not in cursor.execute('''SELECT user_id FROM users''').fetchall()[0]:
-    #     print('tes')
