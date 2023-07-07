@@ -20,7 +20,7 @@ async def func_kb_admin():
 
 async def func_admin_ikb():
     admin_ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("Видалити 'Інструкцію'", callback_data='del_instruction')],
+        [InlineKeyboardButton("Видалити 'Інструкцію'", callback_data='del')],
         [InlineKeyboardButton('Закрити', callback_data='close')]
         ]
         )
@@ -38,10 +38,10 @@ async def func_add_text_ikb():
     return add_text_ikb
 
 
-async def ikb_instructions():
+async def ikb_instructions_and_del(callback):
     ikb = InlineKeyboardMarkup(row_width=1)
     for i in await for_ikb_instructions():
-        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"show_instruction{i[1]}"))
+        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"{callback}{i[1]}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
 # print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))

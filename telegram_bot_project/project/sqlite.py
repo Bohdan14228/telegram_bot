@@ -112,8 +112,20 @@ async def show_records(callback):
         return [i[0] for i in await cursor.fetchall()][0]
 
 
+async def del_records_problems(callback):
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        try:
+            # await cursor.execute("DELETE FROM problems WHERE id LIKE (SELECT id FROM problems WHERE callback = ?)",
+            #                      (callback,))
+            await cursor.execute("DELETE FROM records WHERE problem_id IN (SELECT id FROM problems WHERE callback = ?)",
+                                 (callback,))
+            await cursor.execute("DELETE FROM problems WHERE callback = ?", (callback,))
+        except Exception as ex:
+            print(ex)
+        await db.commit()
 
-# print(asyncio.get_event_loop().run_until_complete(show_records('uhcfypeabi')))
+# print(asyncio.get_event_loop().run_until_complete(del_records_problems('ikuhdyxtny')))
 
 # loop = asyncio.get_event_loop()
 # print(loop.run_until_complete(for_ikb_instructions()))

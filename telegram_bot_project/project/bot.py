@@ -45,7 +45,7 @@ async def send_user_id(message: types.Message):
             await message.answer('У вас недостатньо прав', reply_markup=await func_kb1())
         await message.delete()
     elif message.text == 'Інструкція':
-        await message.answer('Інструкції', reply_markup=await ikb_instructions())
+        await message.answer('Інструкції', reply_markup=await ikb_instructions_and_del('show_instruction'))
     else:
         if await examination_in_base(message.from_user.id):
             await message.delete()
@@ -72,7 +72,8 @@ async def ikb_close(callback: types.CallbackQuery):
     elif callback.data == 'add_text':
         await callback.message.delete()
         await callback.message.answer(f'''Виберіть заголовок для цього тексту:
-<b>{callback.message.text}</b>''', parse_mode='HTML', reply_markup=await add_records_ikb(text=callback.message.text))
+<b>{callback.message.text}</b>''', parse_mode='HTML', reply_markup=await add_records_ikb(
+            text=callback.message.text))
     elif callback.data.startswith('add_records'):
         text = callback.data.replace('add_records', '')
         await add_records(text.split(':')[1], text.split(':')[0])
@@ -80,6 +81,14 @@ async def ikb_close(callback: types.CallbackQuery):
     elif callback.data.startswith('show_instruction'):
         text = callback.data.replace('show_instruction', '')
         await callback.message.answer(await show_records(text))
+    elif callback.data.startswith('del'):
+        await callback.message.delete()
+        await callback.message.answer('Виберіть інструкцію яку хочене видалити',
+                                      reply_markup=await ikb_instructions_and_del(callback='instruction_del'))
+    elif callback.data.startswith('instruction_del'):
+        text = callback.data.replace('instruction_del', '')
+        await del_records_problems(text)
+        await callback.answer()
 
 
 if __name__ == '__main__':
