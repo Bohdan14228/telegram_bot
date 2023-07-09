@@ -1,8 +1,7 @@
-import sqlite3
-import asyncio
 import string
 import aiosqlite
 import random
+import asyncio
 
 
 async def show_for_db(name, name_table):
@@ -10,7 +9,6 @@ async def show_for_db(name, name_table):
         cursor = await db.cursor()
         await cursor.execute(f"SELECT {name} FROM {name_table}")
         return [i[0] for i in await cursor.fetchall()]
-# print(asyncio.get_event_loop().run_until_complete(show_for_db('problem_id', 'records')))
 
 
 # добавляет юзера при нажатии на команду старт
@@ -64,28 +62,21 @@ async def show_problemid_in_records():
     return list1
 
 
-# для кнопок
+# для кнопок показа инструкции
 async def for_ikb_instructions():
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
         await cursor.execute("SELECT id, name_problem, callback FROM problems")
-        return [i[1:] for i in await cursor.fetchall() if i[0] in await show_problemid_in_records()]
+        return [i[:2] for i in await cursor.fetchall() if i[0] in await show_problemid_in_records()]
 # print(asyncio.get_event_loop().run_until_complete(for_ikb_instructions()))
 
 
-async def for_add_records_ikb():
+async def show_record(problem_id):
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
-        await cursor.execute("SELECT id, name_problem, callback FROM problems")
-        return [i[1:] for i in await cursor.fetchall() if i[0] in await show_free_problem()]
-
-
-# паказ инструкций где есть записи
-async def show_problem_id(callback):
-    async with aiosqlite.connect('instructions.db') as db:
-        cursor = await db.cursor()
-        await cursor.execute("SELECT id FROM problems WHERE callback = ?", (callback,))
+        await cursor.execute("SELECT record FROM records WHERE problem_id = ?", (problem_id,))
         return [i[0] for i in await cursor.fetchall()][0]
+# print(asyncio.get_event_loop().run_until_complete(show_record('21')))
 
 
 async def show_free_problem():
@@ -94,6 +85,21 @@ async def show_free_problem():
         if i not in await show_for_db('problem_id', 'records'):
             list1.append(i)
     return list1
+
+
+async def for_add_records_ikb():
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute("SELECT id, name_problem FROM problems")
+        return [i[:2] for i in await cursor.fetchall() if i[0] in await show_free_problem()]
+
+
+# показ инструкций, где есть записи
+async def show_problem_id(callback):
+    async with aiosqlite.connect('instructions.db') as db:
+        cursor = await db.cursor()
+        await cursor.execute("SELECT id FROM problems WHERE id = ?", (callback,))
+        return [i[0] for i in await cursor.fetchall()][0]
 
 
 # добавление записей
@@ -112,21 +118,20 @@ async def show_records(callback):
         return [i[0] for i in await cursor.fetchall()][0]
 
 
-async def del_records_problems(callback):
+async def del_records_problems(record, step: int):
     async with aiosqlite.connect('instructions.db') as db:
-        cursor = await db.cursor()
         try:
-            # await cursor.execute("DELETE FROM problems WHERE id LIKE (SELECT id FROM problems WHERE callback = ?)",
-            #                      (callback,))
-            await cursor.execute("DELETE FROM records WHERE problem_id IN (SELECT id FROM problems WHERE callback = ?)",
-                                 (callback,))
-            await cursor.execute("DELETE FROM problems WHERE callback = ?", (callback,))
+            if step == 1:
+                await db.execute("DELETE FROM records WHERE record = ?", (record,))
+            else:
+                await db.execute("DELETE FROM problems WHERE id IN (SELECT problem_id FROM records WHERE record = ?)",
+                                 (record,))
+                await db.execute("DELETE FROM records WHERE record = ?", (record,))
         except Exception as ex:
             print(ex)
         await db.commit()
 
-# print(asyncio.get_event_loop().run_until_complete(del_records_problems('ikuhdyxtny')))
 
-# loop = asyncio.get_event_loop()
-# print(loop.run_until_complete(for_ikb_instructions()))
+# print(asyncio.get_event_loop().run_until_complete(del_records_problems('https://telegra.ph/nmnm-06-28')))
+
 

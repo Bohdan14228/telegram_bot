@@ -1,6 +1,4 @@
 from aiogram.types import *
-from admin_base import admin_base
-import asyncio
 from sqlite import *
 
 
@@ -38,26 +36,37 @@ async def func_add_text_ikb():
     return add_text_ikb
 
 
-async def ikb_instructions_and_del(callback):
+async def ikb_instructions():
     ikb = InlineKeyboardMarkup(row_width=1)
     for i in await for_ikb_instructions():
-        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"{callback}{i[1]}"))
+        ikb.add(InlineKeyboardButton(text=f"{i[1]}", url=f"{await show_record(i[0])}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
-# print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
+# print(asyncio.get_event_loop().run_until_complete(ikb_instructions_and_del()))
+
+# async def
 
 
-async def add_records_ikb(text):
+async def add_records_ikb():
     ikb = InlineKeyboardMarkup(row_width=1)
     for i in await for_add_records_ikb():
-        ikb.add(InlineKeyboardButton(text=f"{i[0]}", callback_data=f"add_records{text}:{i[1]}"))
+        ikb.add(InlineKeyboardButton(text=f"{i[1]}", callback_data=f"add_records{i[0]}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
 
-# print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
+
+async def del_instruction_step_1():
+    ikb = InlineKeyboardMarkup(row_width=1)
+    for i in await for_ikb_instructions():
+        ikb.add(InlineKeyboardButton(text=f"{i[1]}", callback_data=f"instruction_del_step_1{await show_record(i[0])}"))
+    ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
+    return ikb
 
 
-# @dp.message_handler()
-# async def fist(message: types.Message):
-#     if message.text == 'Твій user_id':
-#         await bot.send_message(chat_id=message.from_user.id, text=f"{message.from_user.id}")
+async def del_instruction_step_2(record):
+    add_text_ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("Видалити тільки текст інструкції", callback_data=f'instruction_del_1{record}')],
+        [InlineKeyboardButton("Видалити і заголовок і текст інструкції", callback_data=f'instruction_del_2{record}')],
+    ]
+    )
+    return add_text_ikb

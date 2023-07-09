@@ -1,14 +1,16 @@
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.dispatcher.filters import Text
-import random
 from keyboard import *
 from admin_base import admin_base
 from sqlite import *
+import aiosqlite
 
 API_TOKEN = '5993455599:AAF5T1T_U0Mgglb7aCMJLXQfnXRaW8Zt-_U'
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
+
+
+text_record = ''
 
 
 async def on_startup(_):
@@ -45,7 +47,7 @@ async def send_user_id(message: types.Message):
             await message.answer('У вас недостатньо прав', reply_markup=await func_kb1())
         await message.delete()
     elif message.text == 'Інструкція':
-        await message.answer('Інструкції', reply_markup=await ikb_instructions_and_del('show_instruction'))
+        await message.answer('Інструкції', reply_markup=await ikb_instructions())
     else:
         if await examination_in_base(message.from_user.id):
             await message.delete()
@@ -57,38 +59,47 @@ async def send_user_id(message: types.Message):
 
 @dp.callback_query_handler()
 async def ikb_close(callback: types.CallbackQuery):
+    global text_record
     if callback.data == 'close':
         await callback.message.delete()
-    # elif callback.data == 'add_instruction':
-    #     await callback.message.delete()
-    #     await callback.message.answer('Напишіть заголовок для інструкції')
     elif callback.data == 'add_header':
         try:
             await add_instruction(callback.message.text)
             await callback.answer('Додано новий заголовок')
-        except sqlite3.IntegrityError as ex:
+        except aiosqlite.IntegrityError as ex:
             await callback.message.answer('Такий заголовок вже існує')
         await callback.message.delete()
     elif callback.data == 'add_text':
+        text_record = callback.message.text
+        await callback.message.answer(f'''Виберіть заголовок для цього тексту:<b>{callback.message.text}</b>''',
+                                      parse_mode='HTML',
+                                      reply_markup=await add_records_ikb())
         await callback.message.delete()
-        await callback.message.answer(f'''Виберіть заголовок для цього тексту:
-<b>{callback.message.text}</b>''', parse_mode='HTML', reply_markup=await add_records_ikb(
-            text=callback.message.text))
     elif callback.data.startswith('add_records'):
         text = callback.data.replace('add_records', '')
-        await add_records(text.split(':')[1], text.split(':')[0])
+        await add_records(text, text_record)
         await callback.message.delete()
     elif callback.data.startswith('show_instruction'):
         text = callback.data.replace('show_instruction', '')
         await callback.message.answer(await show_records(text))
     elif callback.data.startswith('del'):
+        # await callback.message.delete()
+        await callback.message.edit_text('Виберіть інструкцію яку хочете видалити',
+                                         reply_markup=await del_instruction_step_1())
+    elif callback.data.startswith('instruction_del_step_1'):
+        text = callback.data.replace('instruction_del_step_1', '')
+        await callback.message.edit_text('Виберіть що саме хочете видалити',
+                                         reply_markup=await del_instruction_step_2(text))
+    elif callback.data.startswith('instruction_del_1'):
+        await callback.answer('Видалено')
+        text = callback.data.replace('instruction_del_1', '')
+        await del_records_problems(text, 1)
         await callback.message.delete()
-        await callback.message.answer('Виберіть інструкцію яку хочене видалити',
-                                      reply_markup=await ikb_instructions_and_del(callback='instruction_del'))
-    elif callback.data.startswith('instruction_del'):
-        text = callback.data.replace('instruction_del', '')
-        await del_records_problems(text)
-        await callback.answer()
+    elif callback.data.startswith('instruction_del_2'):
+        await callback.answer('Видалено')
+        text = callback.data.replace('instruction_del_2', '')
+        await del_records_problems(text, 2)
+        await callback.message.delete()
 
 
 if __name__ == '__main__':
