@@ -38,11 +38,11 @@ async def func_add_text_ikb():
 
 async def ikb_instructions():
     ikb = InlineKeyboardMarkup(row_width=1)
-    for i in await for_ikb_instructions():
+    for i in await for_ikb_instructions('show'):
         ikb.add(InlineKeyboardButton(text=f"{i[1]}", url=f"{await show_record(i[0])}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
-# print(asyncio.get_event_loop().run_until_complete(ikb_instructions_and_del()))
+print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
 
 # async def
 
@@ -57,16 +57,18 @@ async def add_records_ikb():
 
 async def del_instruction_step_1():
     ikb = InlineKeyboardMarkup(row_width=1)
-    for i in await for_ikb_instructions():
-        ikb.add(InlineKeyboardButton(text=f"{i[1]}", callback_data=f"instruction_del_step_1{await show_record(i[0])}"))
+    for i in await for_ikb_instructions('del'):
+        ikb.add(InlineKeyboardButton(text=f"{i[1]}", callback_data=f"instruction_del_step_1{i[0] if not await show_record(i[0]) else await show_record(i[0])}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
+print(asyncio.get_event_loop().run_until_complete(del_instruction_step_1()))
 
 
 async def del_instruction_step_2(record):
     add_text_ikb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("Видалити тільки текст інструкції", callback_data=f'instruction_del_1{record}')],
         [InlineKeyboardButton("Видалити і заголовок і текст інструкції", callback_data=f'instruction_del_2{record}')],
+        [InlineKeyboardButton("Назад", callback_data='back')],
     ]
     )
     return add_text_ikb

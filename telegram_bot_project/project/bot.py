@@ -48,6 +48,7 @@ async def send_user_id(message: types.Message):
         await message.delete()
     elif message.text == 'Інструкція':
         await message.answer('Інструкції', reply_markup=await ikb_instructions())
+        await message.delete()
     else:
         if await examination_in_base(message.from_user.id):
             await message.delete()
@@ -71,25 +72,30 @@ async def ikb_close(callback: types.CallbackQuery):
         await callback.message.delete()
     elif callback.data == 'add_text':
         text_record = callback.message.text
-        await callback.message.answer(f'''Виберіть заголовок для цього тексту:<b>{callback.message.text}</b>''',
-                                      parse_mode='HTML',
-                                      reply_markup=await add_records_ikb())
-        await callback.message.delete()
+        await callback.message.edit_text(f'''Виберіть заголовок для цього тексту:<b>{callback.message.text}</b>''',
+                                         parse_mode='HTML',
+                                         reply_markup=await add_records_ikb())
     elif callback.data.startswith('add_records'):
         text = callback.data.replace('add_records', '')
         await add_records(text, text_record)
+        await callback.answer('Додано новий текст інструкції')
         await callback.message.delete()
     elif callback.data.startswith('show_instruction'):
         text = callback.data.replace('show_instruction', '')
         await callback.message.answer(await show_records(text))
-    elif callback.data.startswith('del'):
-        # await callback.message.delete()
+    elif callback.data.startswith('del') or callback.data == 'back':
         await callback.message.edit_text('Виберіть інструкцію яку хочете видалити',
                                          reply_markup=await del_instruction_step_1())
     elif callback.data.startswith('instruction_del_step_1'):
         text = callback.data.replace('instruction_del_step_1', '')
-        await callback.message.edit_text('Виберіть що саме хочете видалити',
-                                         reply_markup=await del_instruction_step_2(text))
+        if text.isdigit():
+            # await callback.message.answer(text)
+            await del_problems(text)
+            await callback.answer('Видалено')
+            await callback.message.delete()
+        else:
+            await callback.message.edit_text('Виберіть що саме хочете видалити',
+                                             reply_markup=await del_instruction_step_2(text))
     elif callback.data.startswith('instruction_del_1'):
         await callback.answer('Видалено')
         text = callback.data.replace('instruction_del_1', '')

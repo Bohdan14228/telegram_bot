@@ -63,19 +63,27 @@ async def show_problemid_in_records():
 
 
 # для кнопок показа инструкции
-async def for_ikb_instructions():
+async def for_ikb_instructions(comm: str):
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
-        await cursor.execute("SELECT id, name_problem, callback FROM problems")
-        return [i[:2] for i in await cursor.fetchall() if i[0] in await show_problemid_in_records()]
-# print(asyncio.get_event_loop().run_until_complete(for_ikb_instructions()))
+        await cursor.execute("SELECT id, name_problem FROM problems")
+        if comm == 'show':
+            return [i for i in await cursor.fetchall() if i[0] in await show_problemid_in_records()]
+        else:
+            return [i for i in await cursor.fetchall()]
+
+
+# print(asyncio.get_event_loop().run_until_complete(for_ikb_instructions('del')))
 
 
 async def show_record(problem_id):
     async with aiosqlite.connect('instructions.db') as db:
         cursor = await db.cursor()
         await cursor.execute("SELECT record FROM records WHERE problem_id = ?", (problem_id,))
-        return [i[0] for i in await cursor.fetchall()][0]
+        try:
+            return [i[0] for i in await cursor.fetchall()][0]
+        except IndexError:
+            return None
 # print(asyncio.get_event_loop().run_until_complete(show_record('21')))
 
 
@@ -132,6 +140,9 @@ async def del_records_problems(record, step: int):
         await db.commit()
 
 
+async def del_problems(problem_id):
+    async with aiosqlite.connect('instructions.db') as db:
+        await db.execute("DELETE FROM problems WHERE id = ?", (problem_id,))
+        await db.commit()
+
 # print(asyncio.get_event_loop().run_until_complete(del_records_problems('https://telegra.ph/nmnm-06-28')))
-
-
