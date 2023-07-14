@@ -42,7 +42,7 @@ async def ikb_instructions():
         ikb.add(InlineKeyboardButton(text=f"{i[1]}", url=f"{await show_record(i[0])}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
-print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
+# print(asyncio.get_event_loop().run_until_complete(ikb_instructions()))
 
 # async def
 
@@ -61,7 +61,7 @@ async def del_instruction_step_1():
         ikb.add(InlineKeyboardButton(text=f"{i[1]}", callback_data=f"instruction_del_step_1{i[0] if not await show_record(i[0]) else await show_record(i[0])}"))
     ikb.add(InlineKeyboardButton('Закрити', callback_data='close'))
     return ikb
-print(asyncio.get_event_loop().run_until_complete(del_instruction_step_1()))
+# print(asyncio.get_event_loop().run_until_complete(del_instruction_step_1()))
 
 
 async def del_instruction_step_2(record):
