@@ -50,7 +50,7 @@ async def contacts(file_path, tt):
                    f"ТТ: {row[1].split()[0]}\n" \
                    f"Адреса: {address}\n" \
                    f"ТМ: {row[2]}\n" \
-                   f"Тел.: {row[3] if row[3] else ''}{', ' if row[3] and row[4] else ''}{row[4] if row[4] else ''}\n" \
+                   f"Тел.: <a>{row[3] if row[3] else ''}{', ' if row[3] and row[4] else ''}{row[4] if row[4] else ''}</a>\n" \
                    f"Графік: {row[5]}\n"
             return text
 

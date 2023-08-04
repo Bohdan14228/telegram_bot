@@ -11,6 +11,12 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 
+async def func_kb1():
+    kb1 = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb1.add(KeyboardButton('выключить'))
+    return kb1
+
+
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     if message.from_user.last_name is None:
@@ -18,7 +24,7 @@ async def start(message: types.Message):
     else:
         name = f"{message.from_user.first_name} {message.from_user.last_name}"
     mess = f'Привіт, {name}'
-    await message.answer(text=mess)
+    await message.answer(text=mess, reply_markup=await func_kb1())
     await message.delete()
 
 
