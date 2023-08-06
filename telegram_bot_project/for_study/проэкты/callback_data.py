@@ -10,22 +10,21 @@ dp = Dispatcher(bot)
 
 cb = CallbackData('ikb', 'action')
 
-
-async def get_inline_keyboard() -> InlineKeyboardMarkup:
-    ikb = InlineKeyboardMarkup(inline_keyboard=
-                               [InlineKeyboardButton('Increase', callback_data='btn_increase')]
-                               )
-    return ikb
-
+ikb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton('Button', callback_data=cb.new('push'))]
+                                            ])
+print(ikb)
 
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message) -> None:
-    await message.answer('Text', reply_markup=await get_inline_keyboard())
+    await message.answer('Text', reply_markup=ikb)
 
 
-@dp.callback_query_handler()
-async def ikb_cb_handler(callback: types.CallbackQuery) -> None:
-    await callback.answer('Something')
+# @dp.callback_query_handler(lambda callback_query: callback_query.data == 'hello')
+@dp.callback_query_handler(cb.filter())
+async def ikb_cb_handler(callback: types.CallbackQuery, callback_data: dict) -> None:
+    print(callback_data)
+    if callback_data['action'] == 'push':
+        await callback.answer('Something')
 
 
 if __name__ == '__main__':
