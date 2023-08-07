@@ -4,6 +4,7 @@ from aiogram.types import *
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.middlewares import BaseMiddleware
+from aiogram.dispatcher.handler import CancelHandler, current_handler
 
 
 API_TOKEN = '6697261370:AAFTRKjt8yQ_axSHBkqADo5PfZeQfg-0u8k'
@@ -12,18 +13,34 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot, storage=storage)
 
 
-class ClassMid(BaseMiddleware):
-    async def on_process_update(self, update: types.Update, data: dict):
-        print('sdadada')
+def set_key(key: str = None):
+    def decorator(func):
+        setattr(func, 'key', key)
+        return func
 
-    async def on_pre_process_update(self, update: types.Update, data: dict):
-        print('Hello')
+    return decorator
+
+
+class ClassMid(BaseMiddleware):
+    # async def on_process_message(self, message: types.Message, data: dict):
+    # if message.from_user.id != 428392590:
+    #     raise CancelHandler()
+    async def on_process_message(self, message: types.Message, data: dict):
+        handler = current_handler.get()
+        if handler:
+            key = getattr(handler, 'key', 'Такого атрибута нет')
+            print(key)
 
 
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message) -> None:
     await message.answer('Добро пожаловать')
-    print('World!')
+
+
+@dp.message_handler(lambda message: message.text.lower() == 'привет')
+@set_key()
+async def cmd_start(message: types.Message) -> None:
+    await message.answer('Hi')
 
 
 if __name__ == '__main__':
