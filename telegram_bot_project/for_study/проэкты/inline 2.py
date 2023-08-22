@@ -45,11 +45,17 @@ async def digit(message: types.Message):
 async def inline_echo(inline_query: types.InlineQuery) -> None:
     text = inline_query.query or 'Echo'
 
+    t1 = """
+    Шестеренка – админ – сервис – служебные функции (справа внизу) – пароль 00000000 
+    (восемь нулей) – сервисная консоль ФР (2й столбик, 2я строка) – модем –
+    инициировать передачу данных на сервер экваера
+
+    """
     item1 = InlineQueryResultArticle(
-        input_message_content=InputTextMessageContent(message_text=f"*{text}*", parse_mode='markdown'),
+        input_message_content=InputTextMessageContent(message_text=f"*{t1}*", parse_mode='markdown'),
         id=str(uuid.uuid4()),
-        title='Bold',
-        description=text
+        title='ФР 72h',
+        # description=text
     )
 
     item2 = InlineQueryResultArticle(

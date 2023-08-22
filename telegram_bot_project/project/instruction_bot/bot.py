@@ -4,8 +4,11 @@ from admin_base import admin_base
 from sqlite import *
 import aiosqlite
 import aiogram
+import uuid
+from thagotovki import *
+import os
 
-API_TOKEN = '5993455599:AAF5T1T_U0Mgglb7aCMJLXQfnXRaW8Zt-_U'
+API_TOKEN = '6446700278:AAG2luQ6hJINIcWphrMSIyTHPok1zflQrd4'
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
@@ -161,6 +164,47 @@ async def ikb_close(callback: types.CallbackQuery):
         text = callback.data.replace('instruction_del_2', '')
         await del_records_problems(text, 2)
         await callback.message.delete()
+
+
+@dp.inline_handler()
+async def inline_echo(inline_query: types.InlineQuery) -> None:
+    text = inline_query.query or None
+    r = []
+    for i in slovar:
+        item1 = InlineQueryResultArticle(
+            input_message_content=InputTextMessageContent(message_text=f"{slovar[i]}", parse_mode='markdown'),
+            id=str(uuid.uuid4()),
+            title=f"{i}",
+            # description=text
+        )
+        r.append(item1)
+
+    r.append(
+        InlineQueryResultArticle(
+            input_message_content=InputTextMessageContent(message_text=
+                                                          f"*Шестерёнка – админ – настройки - ФР* нажмите на *Порт*,\
+                                                             выберете tcp и пишите *{text}*, сохраните дискета слева\
+                                                             внизу и проверьте связь *шестерёнка – касса – проверка\
+                                                             связи ФР* и фото",
+                                                          parse_mode='markdown'),
+            id=str(uuid.uuid4()),
+            title=f"{'IP порт на ФР'}",
+        )
+    )
+
+    it = InlineQueryResultArticle(
+            input_message_content=InputTextMessageContent(message_text=f"ghjdthrrf", parse_mode='markdown'),
+            id=str(uuid.uuid4()),
+            title=f"218")
+
+    photo_path = os.path.join("media", "img.png")
+    it.photo_url = f"file://{photo_path}"
+    it.thumb_url = f"file://{photo_path}"
+    r.append(it)
+
+    await bot.answer_inline_query(inline_query_id=inline_query.id,
+                                  results=r,
+                                  cache_time=1)
 
 
 if __name__ == '__main__':
