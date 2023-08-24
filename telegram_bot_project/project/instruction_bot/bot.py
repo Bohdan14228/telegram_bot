@@ -13,7 +13,6 @@ API_TOKEN = '6446700278:AAG2luQ6hJINIcWphrMSIyTHPok1zflQrd4'
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
-
 text_record = ''
 
 
@@ -77,7 +76,7 @@ async def send_user_id(message: types.Message):
 @dp.callback_query_handler()
 async def ikb_close(callback: types.CallbackQuery):
     global text_record
-    #закрытие
+    # закрытие
     if callback.data == 'close':
         await callback.message.delete()
     # добавление заголовка в одну из платформ
@@ -179,33 +178,20 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
         )
         r.append(item1)
 
+    for y in drugoe:
+        r.append(y)
+
     r.append(
         InlineQueryResultArticle(
-            input_message_content=InputTextMessageContent(message_text=
-                                                          f"*Шестерёнка – админ – настройки - ФР* нажмите на *Порт*,\
-                                                             выберете tcp и пишите *{text}*, сохраните дискета слева\
-                                                             внизу и проверьте связь *шестерёнка – касса – проверка\
-                                                             связи ФР* и фото",
-                                                          parse_mode='markdown'),
+            input_message_content=InputTextMessageContent(
+                message_text=f"*Шестерёнка – админ – настройки - ФР* нажмите на *Порт*,\
+                                выберете tcp и пишите *{text}*, сохраните дискета слева\
+                                внизу и проверьте связь *шестерёнка – касса – проверка\
+                                связи ФР* и фото", parse_mode='markdown'),
             id=str(uuid.uuid4()),
             title=f"{'IP порт на ФР'}",
         )
     )
-
-    photo_path = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/media/img.png?raw=true'
-
-    it = InlineQueryResultPhoto(
-        id=str(uuid.uuid4()),
-        title=f"218",
-        caption=f"привет",
-        photo_url=photo_path,
-        thumb_url=photo_path)
-
-    r.append(it)
-
-    await bot.answer_inline_query(inline_query_id=inline_query.id,
-                                  results=r,
-                                  cache_time=1)
 
 
 if __name__ == '__main__':
