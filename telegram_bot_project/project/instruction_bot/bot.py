@@ -197,9 +197,10 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
             id=str(uuid.uuid4()),
             title=f"218")
 
-    photo_path = os.path.join("media", "img.png")
-    it.photo_url = f"file://{photo_path}"
-    it.thumb_url = f"file://{photo_path}"
+    photo_path = 'https://cdn.pixabay.com/photo/2016/06/08/15/45/lemon-1444025_640.jpg'
+    photo_media = InputMediaPhoto(media=photo_path)
+    it.media = photo_media
+    it.thumb_url = photo_path
     r.append(it)
 
     await bot.answer_inline_query(inline_query_id=inline_query.id,
