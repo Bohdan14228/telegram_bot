@@ -168,7 +168,7 @@ async def ikb_close(callback: types.CallbackQuery):
 @dp.inline_handler()
 async def inline_echo(inline_query: types.InlineQuery) -> None:
     text = inline_query.query or None
-    r = []
+    inline_set = []
     for i in slovar:
         item1 = InlineQueryResultArticle(
             input_message_content=InputTextMessageContent(message_text=f"{slovar[i]}", parse_mode='markdown'),
@@ -176,12 +176,11 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
             title=f"{i}",
             # description=text
         )
-        r.append(item1)
+        inline_set.append(item1)
 
-    for y in drugoe:
-        r.append(y)
+    inline_set.extend(drugoe)
 
-    r.append(
+    inline_set.append(
         InlineQueryResultArticle(
             input_message_content=InputTextMessageContent(
                 message_text=f"*Шестерёнка – админ – настройки - ФР* нажмите на *Порт*,\
@@ -192,6 +191,10 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
             title=f"{'IP порт на ФР'}",
         )
     )
+
+    await bot.answer_inline_query(inline_query_id=inline_query.id,
+                                  results=inline_set,
+                                  cache_time=1)
 
 
 if __name__ == '__main__':

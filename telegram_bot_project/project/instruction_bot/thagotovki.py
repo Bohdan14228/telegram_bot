@@ -49,12 +49,15 @@ slovar = {
 
 }
 
-photo_datchik = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/\
-    media/%D0%B4%D0%B0%D1%82%D1%87%D0%B8%D0%BA.png?raw=true'
-photo_portov_fr = ''
-photo_portov_kipera = ''
-photo_usb_hub = ''
-photo_fuse_vesa = ''
+photo_datchik = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/media/%D0%B4%D0%B0%D1%82%D1%87%D0%B8%D0%BA.png?raw=true'
+photo_portov_fr = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/\
+media/%D0%BF%D0%BE%D1%80%D1%82%D1%8B_%D1%84%D1%80.png?raw=true'
+photo_portov_kipera = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_\
+bot/media/%D0%BF%D0%BE%D1%80%D1%82%D1%8B_%D0%BA%D0%B8%D0%BF%D0%B5%D1%80.png?raw=true'
+photo_usb_hub = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/\
+media/usb_hub.png?raw=true'
+photo_fuse_vesa = 'https://github.com/Bohdan14228/telegram_bot/blob/main/telegram_bot_project/project/instruction_bot/\
+media/fesu_vesa.png?raw=true'
 drugoe = [
     InlineQueryResultPhoto(
         id=str(uuid.uuid4()),
@@ -86,10 +89,11 @@ drugoe = [
 
     InlineQueryResultPhoto(
         id=str(uuid.uuid4()),
-        title=f"Сканер",
-        caption="Снизу под весами сть такие два fuse, обязательно выключите весы из розетки, с кнопки справа внизу и \
-        на передней панели выключите веса, открутите эти fuse, там будут предохранители поменяйте их местами, вкрутите \
-        плотно предохранители обратно, включите веса в сеть с кнопки справа внизу и на передней панели и проверьте",
+        title=f"Веса",
+        caption="""Снизу под весами сть такие два fuse, обязательно выключите весы из розетки, с кнопки справа внизу и \
+на передней панели выключите веса, открутите эти fuse, там будут предохранители поменяйте их местами, \
+вкрутите плотно предохранители обратно, включите веса в сеть с кнопки справа внизу и на передней \
+панели и проверьте""",
         photo_url=photo_fuse_vesa,
         thumb_url=photo_fuse_vesa)
 ]
