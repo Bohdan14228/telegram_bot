@@ -174,11 +174,8 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
             input_message_content=InputTextMessageContent(message_text=f"{slovar[i]}", parse_mode='markdown'),
             id=str(uuid.uuid4()),
             title=f"{i}",
-            # description=text
         )
         inline_set.append(item1)
-
-    inline_set.extend(drugoe)
 
     inline_set.append(
         InlineQueryResultArticle(
@@ -189,8 +186,11 @@ async def inline_echo(inline_query: types.InlineQuery) -> None:
                                 связи ФР* и фото", parse_mode='markdown'),
             id=str(uuid.uuid4()),
             title=f"{'IP порт на ФР'}",
+            description='Впишите IP'
         )
     )
+
+    inline_set.extend(drugoe)
 
     await bot.answer_inline_query(inline_query_id=inline_query.id,
                                   results=inline_set,
